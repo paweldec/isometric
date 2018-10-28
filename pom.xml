@@ -12,6 +12,7 @@
 		<libgdx.version>1.9.8</libgdx.version>
 		<lombok.version>1.18.2</lombok.version>
 		<logback.version>1.2.3</logback.version>
+		<commons-lang3.version>3.8.1</commons-lang3.version>
 	</properties>
 
 	<dependencyManagement>
@@ -53,6 +54,11 @@
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
 				<version>${logback.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${commons-lang3.version}</version>
 			</dependency>
 
 		</dependencies>

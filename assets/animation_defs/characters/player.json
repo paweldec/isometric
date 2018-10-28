@@ -1,10 +1,10 @@
 {
-    "image": "../test",
+    "texturePath": "characters/minotaur.png",
     "renderSizeWidth": 128,
     "renderSizeHeight": 128,
     "renderOffsetX": 64,
     "renderOffsetY": 96,
-    "animations": [{
+    "states": [{
         "name": "stance",
         "position": 0,
         "frames": 4,

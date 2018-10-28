@@ -8,8 +8,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.jteam.isometric.core.animation.AnimationDef;
-import com.jteam.isometric.core.animation.AnimationDefLoader;
+import com.jteam.isometric.core.animation.Animation;
+import com.jteam.isometric.core.animation.AnimationController;
+import com.jteam.isometric.core.animation.AnimationDirection;
+import com.jteam.isometric.core.animation.AnimationLoader;
+import com.jteam.isometric.core.renderer.Renderer;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -18,8 +21,10 @@ public class Demo implements ApplicationListener {
 	private OrthographicCamera camera;
 	private AssetManager assetManager;
 	private TiledMap map;
-	private AnimationDef playerAnimationDef;
-	private IsometricMapRenderer renderer;
+	private Animation minotaurAnimation;
+	private AnimationController minotaurAnimationController;
+	private Renderer renderer;
+	private IsometricMapRenderer isometricMapRenderer;
 
 	@Override
 	public void create () {
@@ -36,15 +41,21 @@ public class Demo implements ApplicationListener {
 
 		assetManager = new AssetManager();
 		assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
-		assetManager.setLoader(AnimationDef.class, new AnimationDefLoader(new InternalFileHandleResolver()));
+		assetManager.setLoader(Animation.class, new AnimationLoader(new InternalFileHandleResolver()));
 		assetManager.load(Asset.MAP_DEMO, TiledMap.class);
-		assetManager.load(Asset.ANIMATION_DEF_PLAYER, AnimationDef.class);
+		assetManager.load(Asset.ANIMATION_MINOTAUR, Animation.class);
 		assetManager.finishLoading();
 
 		map = assetManager.get(Asset.MAP_DEMO);
-		playerAnimationDef = assetManager.get(Asset.ANIMATION_DEF_PLAYER);
+		minotaurAnimation = assetManager.get(Asset.ANIMATION_MINOTAUR);
 
-		renderer = new IsometricMapRenderer(map);
+		renderer = new Renderer();
+
+		minotaurAnimationController = new AnimationController(renderer, minotaurAnimation);
+		minotaurAnimationController.setState("stance");
+		minotaurAnimationController.setDirection(AnimationDirection.E);
+
+		isometricMapRenderer = new IsometricMapRenderer(renderer, map);
 	}
 
 	@Override
@@ -58,7 +69,14 @@ public class Demo implements ApplicationListener {
 	public void render () {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
-		renderer.setView(camera);
+
+		isometricMapRenderer.setView(camera);
+		isometricMapRenderer.render();
+
+		minotaurAnimationController.setView(camera);
+		minotaurAnimationController.update();
+		minotaurAnimationController.render();
+
 		renderer.render();
 	}
 

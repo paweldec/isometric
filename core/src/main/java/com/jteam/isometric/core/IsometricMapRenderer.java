@@ -1,25 +1,25 @@
 package com.jteam.isometric.core;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapGroupLayer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Disposable;
+import com.jteam.isometric.core.renderer.Renderer;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class IsometricMapRenderer implements TiledMapRenderer, Disposable {
 
+    private Renderer renderer;
     private TiledMap map;
     private OrthographicCamera camera;
-    private SpriteBatch batch;
 
-    public IsometricMapRenderer(TiledMap map) {
+    public IsometricMapRenderer(Renderer renderer, TiledMap map) {
+        this.renderer = renderer;
         this.map = map;
-        this.batch = new SpriteBatch();
     }
 
     @Override
@@ -59,9 +59,9 @@ public class IsometricMapRenderer implements TiledMapRenderer, Disposable {
                 if(tile == null) continue;
 
                 float tilePosX = (tileIndexX * tileWidth) + (tileIndexY % 2 == 0 ? tileWidthHalf : 0) - camera.position.x;
-                float tilePosY = (tileIndexY * tileHeightHalf) -camera.position.y;
+                float tilePosY = (tileIndexY * tileHeightHalf) - camera.position.y;
 
-                batch.draw(tile.getTextureRegion(), tilePosX, tilePosY);
+                renderer.draw(tile.getTextureRegion(), tilePosX, tilePosY);
             }
         }
     }
@@ -83,9 +83,7 @@ public class IsometricMapRenderer implements TiledMapRenderer, Disposable {
 
     @Override
     public void render() {
-        batch.begin();
         map.getLayers().forEach(this::renderMapLayer);
-        batch.end();
     }
 
     @Override

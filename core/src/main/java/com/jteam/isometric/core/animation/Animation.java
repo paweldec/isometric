@@ -1,12 +1,17 @@
 package com.jteam.isometric.core.animation;
 
+import com.badlogic.gdx.graphics.Texture;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-class Animation {
-    private String name;
-    private int position;
-    private int frames;
-    private long duration;
-    private AnimationType type;
+public class Animation {
+    private Texture texture;
+    private String texturePath;
+    private int renderSizeWidth;
+    private int renderSizeHeight;
+    private int renderOffsetX;
+    private int renderOffsetY;
+    private List<AnimationState> states;
 }

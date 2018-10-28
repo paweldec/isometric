@@ -1,0 +1,64 @@
+{
+  "texturePath": "characters/minotaur/minotaur.png",
+  "renderSizeWidth": 128,
+  "renderSizeHeight": 128,
+  "renderOffsetX": 64,
+  "renderOffsetY": 96,
+  "states": [
+    {
+      "name": "stance",
+      "position": 0,
+      "frames": 8,
+      "duration": 160,
+      "type": "LOOPED"
+    }, {
+      "name": "run",
+      "position": 8,
+      "frames": 8,
+      "duration": 160,
+      "type": "LOOPED"
+    }, {
+      "name": "swing",
+      "position": 16,
+      "frames": 8,
+      "duration": 1066,
+      "type": "PLAY_ONCE"
+    }, {
+      "name": "block",
+      "position": 24,
+      "frames": 8,
+      "duration": 266,
+      "type": "PLAY_ONCE"
+    }, {
+      "name": "cast",
+      "position": 40,
+      "frames": 8,
+      "duration": 800,
+      "type": "PLAY_ONCE"
+    }, {
+      "name": "shoot",
+      "position": 56,
+      "frames": 8,
+      "duration": 800,
+      "type": "PLAY_ONCE"
+    }, {
+      "name": "hit",
+      "position": 48,
+      "frames": 3,
+      "duration": 200,
+      "type": "BACK_FORTH"
+    }, {
+      "name": "die",
+      "position": 48,
+      "frames": 8,
+      "duration": 1066,
+      "type": "PLAY_ONCE"
+    }, {
+      "name": "critdie",
+      "position": 48,
+      "frames": 8,
+      "duration": 1066,
+      "type": "PLAY_ONCE"
+    }
+  ]
+}
