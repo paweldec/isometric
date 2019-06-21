@@ -10,6 +10,7 @@
 
 	<properties>
 		<libgdx.version>1.9.8</libgdx.version>
+		<pathfinding.version>0.2.6</pathfinding.version>
 		<lombok.version>1.18.2</lombok.version>
 		<logback.version>1.2.3</logback.version>
 		<commons-lang3.version>3.8.1</commons-lang3.version>
@@ -22,6 +23,11 @@
 				<groupId>com.badlogicgames.gdx</groupId>
 				<artifactId>gdx</artifactId>
 				<version>${libgdx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.github.xaguzman</groupId>
+				<artifactId>pathfinding-gdx-bridge</artifactId>
+				<version>${pathfinding.version}</version>
 			</dependency>
 
 			<!-- desktop-specific dependencies -->

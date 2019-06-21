@@ -12,8 +12,12 @@ import com.jteam.isometric.core.animation.Animation;
 import com.jteam.isometric.core.animation.AnimationController;
 import com.jteam.isometric.core.animation.AnimationDirection;
 import com.jteam.isometric.core.animation.AnimationLoader;
+import com.jteam.isometric.core.path.PathFinder;
 import com.jteam.isometric.core.renderer.Renderer;
 import lombok.extern.slf4j.Slf4j;
+import org.xguzm.pathfinding.grid.GridCell;
+
+import java.util.List;
 
 @Slf4j
 public class Demo implements ApplicationListener {
@@ -23,6 +27,7 @@ public class Demo implements ApplicationListener {
 	private TiledMap map;
 	private Animation minotaurAnimation;
 	private AnimationController minotaurAnimationController;
+	private PathFinder pathFinder;
 	private Renderer renderer;
 	private IsometricMapRenderer isometricMapRenderer;
 
@@ -54,6 +59,10 @@ public class Demo implements ApplicationListener {
 		minotaurAnimationController = new AnimationController(renderer, minotaurAnimation);
 		minotaurAnimationController.setState("stance");
 		minotaurAnimationController.setDirection(AnimationDirection.E);
+
+		pathFinder = new PathFinder(map);
+		List<GridCell> path = pathFinder.find(5, 28, 6, 29);
+		log.debug(path.toString());
 
 		isometricMapRenderer = new IsometricMapRenderer(renderer, map);
 	}
