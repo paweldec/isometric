@@ -60,10 +60,6 @@ public class Demo implements ApplicationListener {
 		minotaurAnimationController.setState("stance");
 		minotaurAnimationController.setDirection(AnimationDirection.E);
 
-		pathFinder = new PathFinder(map);
-		List<GridCell> path = pathFinder.find(5, 28, 6, 29);
-		log.debug(path.toString());
-
 		isometricMapRenderer = new IsometricMapRenderer(renderer, map);
 	}
 

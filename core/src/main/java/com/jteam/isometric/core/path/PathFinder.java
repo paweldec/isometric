@@ -2,6 +2,7 @@ package com.jteam.isometric.core.path;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Vector2;
 import org.xguzm.pathfinding.grid.GridCell;
 import org.xguzm.pathfinding.grid.NavigationGrid;
 import org.xguzm.pathfinding.grid.finders.AStarGridFinder;
@@ -23,8 +24,8 @@ public class PathFinder {
         init();
     }
 
-    public List<GridCell> find(int startX, int startY, int endX, int endY) {
-        return this.finder.findPath(startX, startY, endX, endY, this.navigationGrid);
+    public List<GridCell> find(Vector2 start, Vector2 end) {
+        return this.finder.findPath((int)start.x, (int)start.y, (int)end.x, (int)end.y, this.navigationGrid);
     }
 
     private void init() {
