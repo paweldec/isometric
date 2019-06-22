@@ -10,14 +10,19 @@ public class CoordMath {
     private static final int TILE_HEIGHT_HALF = TILE_HEIGHT / 2;
 
     /**
-    * Calculates left top corner tile position (cartesian) from coord (isometric)
+    * Calculates left top corner or center tile position (cartesian) from coord (isometric)
     */
-    public static void coordToPosition(Vector2 coord, Vector2 position) {
+    public static void coordToPosition(Vector2 coord, Vector2 position, boolean center) {
         int coordX = (int)coord.x;
         int coordY = (int)coord.y;
 
         position.x = (coordX * TILE_WIDTH) + (coordY % 2 == 0 ? 0 : TILE_WIDTH_HALF);
         position.y = coordY * TILE_HEIGHT_HALF;
+
+        if(center) {
+            position.x += TILE_WIDTH_HALF;
+            position.y += TILE_HEIGHT_HALF;
+        }
     }
 
     /**
