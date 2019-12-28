@@ -8,16 +8,18 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Vector2;
 import com.jteam.isometric.core.animation.Animation;
 import com.jteam.isometric.core.animation.AnimationController;
 import com.jteam.isometric.core.animation.AnimationDirection;
 import com.jteam.isometric.core.animation.AnimationLoader;
+import com.jteam.isometric.core.creature.Creature;
+import com.jteam.isometric.core.movement.MovementController;
 import com.jteam.isometric.core.path.PathFinder;
+import com.jteam.isometric.core.render.RenderController;
 import com.jteam.isometric.core.renderer.Renderer;
+import com.jteam.isometric.core.util.CordMath;
 import lombok.extern.slf4j.Slf4j;
-import org.xguzm.pathfinding.grid.GridCell;
-
-import java.util.List;
 
 @Slf4j
 public class Demo implements ApplicationListener {
@@ -28,6 +30,8 @@ public class Demo implements ApplicationListener {
 	private Animation minotaurAnimation;
 	private AnimationController minotaurAnimationController;
 	private PathFinder pathFinder;
+	private MovementController movementController;
+	private RenderController renderController;
 	private Renderer renderer;
 	private IsometricMapRenderer isometricMapRenderer;
 
@@ -54,11 +58,26 @@ public class Demo implements ApplicationListener {
 		map = assetManager.get(Asset.MAP_DEMO);
 		minotaurAnimation = assetManager.get(Asset.ANIMATION_MINOTAUR);
 
+
+		Vector2 minotaurPosition = new Vector2();
+		CordMath.cordToPosition(new Vector2(3, 15), minotaurPosition, false);
+		Creature minotaurCreature = Creature.builder()
+				.position(minotaurPosition)
+				.animation(minotaurAnimation)
+				.build();
+
 		renderer = new Renderer();
 
-		minotaurAnimationController = new AnimationController(renderer, minotaurAnimation);
+		minotaurAnimationController = new AnimationController(minotaurCreature);
 		minotaurAnimationController.setState("stance");
 		minotaurAnimationController.setDirection(AnimationDirection.E);
+
+		pathFinder = new PathFinder(map);
+
+		movementController = new MovementController(minotaurCreature, pathFinder);
+		movementController.moveToCord(new Vector2(3, 16));
+
+		renderController = new RenderController(minotaurCreature, renderer, camera);
 
 		isometricMapRenderer = new IsometricMapRenderer(renderer, map);
 	}
@@ -78,9 +97,9 @@ public class Demo implements ApplicationListener {
 		isometricMapRenderer.setView(camera);
 		isometricMapRenderer.render();
 
-		minotaurAnimationController.setView(camera);
 		minotaurAnimationController.update();
-		minotaurAnimationController.render();
+		movementController.update();
+		renderController.update();
 
 		renderer.render();
 	}

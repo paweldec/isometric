@@ -6,8 +6,10 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.jteam.isometric.core.renderer.Renderer;
+import com.jteam.isometric.core.util.CordMath;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -16,10 +18,12 @@ public class IsometricMapRenderer implements TiledMapRenderer, Disposable {
     private Renderer renderer;
     private TiledMap map;
     private OrthographicCamera camera;
+    private boolean showCords;
 
     public IsometricMapRenderer(Renderer renderer, TiledMap map) {
         this.renderer = renderer;
         this.map = map;
+        this.showCords = true;
     }
 
     @Override
@@ -62,8 +66,19 @@ public class IsometricMapRenderer implements TiledMapRenderer, Disposable {
                 float tilePosY = (tileIndexY * tileHeightHalf) - camera.position.y;
 
                 renderer.draw(tile.getTextureRegion(), tilePosX, tilePosY);
+
+                if(showCords) {
+                    renderCord(tilePosX, tilePosY);
+                }
             }
         }
+    }
+
+    private void renderCord(float tilePosX, float tilePosY) {
+        final Vector2 position = new Vector2(tilePosX + camera.position.x, tilePosY + camera.position.y);
+        final Vector2 cord = new Vector2();
+        CordMath.positionToCord(position, cord);
+        renderer.drawText(String.format("%sx%s", (int)cord.x, (int)cord.y), tilePosX + 16 + 5, tilePosY + 16 + 5);
     }
 
     @Override
@@ -77,7 +92,7 @@ public class IsometricMapRenderer implements TiledMapRenderer, Disposable {
     }
 
     @Override
-    public void setView(Matrix4 projectionMatrix, float viewboundsX, float viewboundsY, float viewboundsWidth, float viewboundsHeight) {
+    public void setView(Matrix4 projectionMatrix, float viewBoundsX, float viewBoundsY, float viewBoundsWidth, float viewBoundsHeight) {
 
     }
 

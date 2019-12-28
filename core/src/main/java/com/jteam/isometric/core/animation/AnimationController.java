@@ -1,8 +1,7 @@
 package com.jteam.isometric.core.animation;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.jteam.isometric.core.renderer.Renderer;
+import com.jteam.isometric.core.creature.Creature;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -10,18 +9,15 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class AnimationController {
-    private final Renderer renderer;
-    private final Animation animation;
-    private OrthographicCamera camera;
+    private final Creature creature;
     private AnimationState lastState;
     private AnimationState currentState;
     private AnimationDirection direction;
     private StopWatch elapsedTime;
     private int currentFrame;
 
-    public AnimationController(Renderer renderer, Animation animation) {
-        this.renderer = renderer;
-        this.animation = animation;
+    public AnimationController(Creature creature) {
+        this.creature = creature;
         this.lastState = getFirstState();
         this.currentState = getFirstState();
         this.elapsedTime = new StopWatch();
@@ -31,12 +27,12 @@ public class AnimationController {
 
     public void setState(String stateName) {
         lastState = currentState;
-        currentState = animation.getStates().stream()
+        currentState = creature.getAnimation().getStates().stream()
                 .filter(animationState -> animationState.getName().equals(stateName))
                 .peek(animationState -> this.resetAnimation())
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException(String.format("State %s not found in animation %s",
-                        stateName, animation.getTexturePath())));
+                        stateName, creature.getAnimation().getTexturePath())));
     }
 
     public void setDirection(AnimationDirection direction) {
@@ -61,23 +57,19 @@ public class AnimationController {
             }
         }
 
+        creature.getAnimation().setFrame(getTextureRegion());
+
         elapsedTime.reset();
         elapsedTime.start();
-    }
-
-    public void setView(OrthographicCamera camera) {
-        this.camera = camera;
-    }
-
-    public void render() {
-        renderer.draw(getTextureRegion(), 0 - camera.position.x, 0 - camera.position.y);
     }
 
     private void resetAnimation() {
         currentFrame = 0;
     }
 
-    private TextureRegion getTextureRegion() {
+    public TextureRegion getTextureRegion() {
+        final Animation animation = creature.getAnimation();
+
         if(currentState == null || animation == null || animation.getTexture() == null) return null;
 
         int totalFramesInOneLine = animation.getTexture().getWidth() / animation.getRenderSizeWidth();
@@ -92,7 +84,7 @@ public class AnimationController {
     }
 
     private AnimationState getFirstState() {
-        return animation.getStates().get(0);
+        return creature.getAnimation().getStates().get(0);
     }
 
 }

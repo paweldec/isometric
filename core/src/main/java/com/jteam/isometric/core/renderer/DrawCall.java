@@ -8,6 +8,8 @@ import lombok.Getter;
 @Getter
 class DrawCall {
     private final TextureRegion textureRegion;
+    private final String text;
+    private final DrawCallType type;
     private final float positionX;
     private final float positionY;
 }
