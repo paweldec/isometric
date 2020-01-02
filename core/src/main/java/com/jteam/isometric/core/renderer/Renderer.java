@@ -1,61 +1,84 @@
 package com.jteam.isometric.core.renderer;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.jteam.isometric.core.shape.Line;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class Renderer {
 
     private SpriteBatch batch;
+    private ShapeRenderer shape;
     private BitmapFont font;
-    private List<DrawCall> drawCalls;
+
+    private List<DrawCall<TextureRegion>> drawCallsTexture;
+    private List<DrawCall<String>> drawCallsText;
+    private List<DrawCall<Line>> drawCallsLine;
 
     public Renderer() {
         batch = new SpriteBatch();
+        shape = new ShapeRenderer();
+        shape.setColor(Color.RED);
         font = new BitmapFont();
-        drawCalls = new ArrayList<>();
+
+        drawCallsTexture = new ArrayList<>();
+        drawCallsText = new ArrayList<>();
+        drawCallsLine = new ArrayList<>();
     }
 
     public void draw(TextureRegion textureRegion, float positionX, float positionY) {
         if(textureRegion == null) return;
-
-        drawCalls.add(DrawCall.builder()
-                .textureRegion(textureRegion)
-                .type(DrawCallType.TEXTURE)
-                .positionX(positionX)
-                .positionY(positionY)
-                .build());
+        drawCallsTexture.add(buildDrawCall(textureRegion, positionX, positionY));
     }
 
     public void drawText(String text, float positionX, float positionY) {
         if(text == null) return;
+        drawCallsText.add(buildDrawCall(text, positionX, positionY));
+    }
 
-        drawCalls.add(DrawCall.builder()
-                .text(text)
-                .type(DrawCallType.TEXT)
+    public void drawLine(Line line) {
+        if(line == null) return;
+        drawCallsLine.add(buildDrawCall(line, 0, 0));
+    }
+
+    private <T> DrawCall<T> buildDrawCall(T draw, float positionX, float positionY) {
+        return DrawCall.<T>builder()
+                .draw(draw)
                 .positionX(positionX)
                 .positionY(positionY)
-                .build());
+                .build();
     }
 
     public void render() {
         batch.begin();
-        drawCalls.stream()
-            .sorted(Comparator.comparing(DrawCall::getType))
-            .forEach(this::drawCall);
-        drawCalls.clear();
+        drawCallsTexture.forEach(this::drawTexture);
+        drawCallsText.forEach(this::drawText);;
         batch.end();
+
+        shape.begin(ShapeRenderer.ShapeType.Filled);
+        drawCallsLine.forEach(this::drawLine);
+        shape.end();
+
+        drawCallsTexture.clear();
+        drawCallsText.clear();
+        drawCallsLine.clear();
     }
 
-    private void drawCall(DrawCall drawCall) {
-        switch (drawCall.getType()) {
-            case TEXTURE: batch.draw(drawCall.getTextureRegion(), drawCall.getPositionX(), drawCall.getPositionY()); break;
-            case TEXT: font.draw(batch, drawCall.getText(), drawCall.getPositionX(), drawCall.getPositionY()); break;
-        }
+    private void drawTexture(DrawCall<TextureRegion> drawCall) {
+        batch.draw(drawCall.getDraw(), drawCall.getPositionX(), drawCall.getPositionY());
+    }
+
+    private void drawText(DrawCall<String> drawCall) {
+        font.draw(batch, drawCall.getDraw(), drawCall.getPositionX(), drawCall.getPositionY());
+    }
+
+    private void drawLine(DrawCall<Line> drawCall) {
+        shape.line(drawCall.getDraw().getStart(), drawCall.getDraw().getEnd());
     }
 
 }

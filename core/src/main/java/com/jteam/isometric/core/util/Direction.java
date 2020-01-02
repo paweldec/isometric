@@ -1,11 +1,11 @@
-package com.jteam.isometric.core.animation;
+package com.jteam.isometric.core.util;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum AnimationDirection {
+public enum Direction {
     W(0),
     NW(1),
     N(2),

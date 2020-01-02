@@ -2,6 +2,8 @@ package com.jteam.isometric.core.util;
 
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.Optional;
+
 public class CordMath {
 
     private static final int TILE_WIDTH = 64;
@@ -23,6 +25,30 @@ public class CordMath {
             position.x += TILE_WIDTH_HALF;
             position.y += TILE_HEIGHT_HALF;
         }
+    }
+
+    public static Optional<Vector2> getNeighborCord(Vector2 cord, Vector2 cordNeighbor, Direction dir) {
+        Vector2 position = new Vector2();
+        cordToPosition(cord, position, false);
+
+        switch (dir) {
+            case N: position.y += TILE_HEIGHT; break;
+            case NE: position.x += TILE_WIDTH_HALF; position.y += TILE_HEIGHT_HALF; break;
+            case E: position.x += TILE_WIDTH; break;
+            case SE: position.x += TILE_WIDTH_HALF; position.y -= TILE_HEIGHT_HALF; break;
+            case S: position.y -= TILE_HEIGHT; break;
+            case SW: position.x -= TILE_WIDTH_HALF; position.y -= TILE_HEIGHT_HALF; break;
+            case W: position.x -= TILE_WIDTH; break;
+            case NW: position.x -= TILE_WIDTH_HALF; position.y += TILE_HEIGHT_HALF; break;
+        }
+
+        if(position.x < 0 || position.y < 0) {
+            return Optional.empty();
+        }
+
+        positionToCord(position, cordNeighbor);
+
+        return Optional.of(cordNeighbor);
     }
 
     /**
@@ -51,20 +77,21 @@ public class CordMath {
                 TILE_WIDTH + 1, TILE_HEIGHT + 1,
                 TILE_WIDTH + 1, TILE_HEIGHT_HALF - 1)) {
             cordX++;
+            cordY++;
         }
         // left bottom corner
         else if(isInsideTriangle(normalizedPosX, normalizedPosY,
                 0 - 1, 0 - 1,
                 0 - 1, TILE_HEIGHT_HALF + 1,
                 TILE_WIDTH_HALF + 1, 0 - 1)) {
-            cordX--;
-            cordY++;
+            cordY--;
         }
         // right bottom corner
         else if(isInsideTriangle(normalizedPosX, normalizedPosY,
                 TILE_WIDTH + 1, TILE_HEIGHT_HALF + 1,
                 TILE_WIDTH + 1, 0 - 1,
                 TILE_WIDTH_HALF - 1, 0 - 1)) {
+            cordX++;
             cordY--;
         }
 

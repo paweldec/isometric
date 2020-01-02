@@ -1,15 +1,12 @@
 package com.jteam.isometric.core.renderer;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import lombok.Builder;
 import lombok.Getter;
 
 @Builder
 @Getter
-class DrawCall {
-    private final TextureRegion textureRegion;
-    private final String text;
-    private final DrawCallType type;
+class DrawCall<T> {
+    private final T draw;
     private final float positionX;
     private final float positionY;
 }

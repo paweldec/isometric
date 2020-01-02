@@ -2,6 +2,7 @@ package com.jteam.isometric.core.animation;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.jteam.isometric.core.creature.Creature;
+import com.jteam.isometric.core.util.Direction;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -12,7 +13,7 @@ public class AnimationController {
     private final Creature creature;
     private AnimationState lastState;
     private AnimationState currentState;
-    private AnimationDirection direction;
+    private Direction direction;
     private StopWatch elapsedTime;
     private int currentFrame;
 
@@ -22,7 +23,7 @@ public class AnimationController {
         this.currentState = getFirstState();
         this.elapsedTime = new StopWatch();
         this.elapsedTime.start();
-        this.direction = AnimationDirection.W;
+        this.direction = Direction.W;
     }
 
     public void setState(String stateName) {
@@ -35,7 +36,7 @@ public class AnimationController {
                         stateName, creature.getAnimation().getTexturePath())));
     }
 
-    public void setDirection(AnimationDirection direction) {
+    public void setDirection(Direction direction) {
         this.direction = direction;
     }
 

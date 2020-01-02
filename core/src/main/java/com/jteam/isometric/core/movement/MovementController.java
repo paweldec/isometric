@@ -20,7 +20,7 @@ public class MovementController {
     private boolean moving;
     private Queue<GridCell> path;
 
-    private static final float MOVE_SPEED = 0.5f;
+    private static final float MOVE_SPEED = 1.5f;
 
     public MovementController(Creature creature, PathFinder pathFinder) {
         this.pathFinder = pathFinder;
@@ -58,7 +58,7 @@ public class MovementController {
 
         Vector2 targetCord = new Vector2(pathPoint.x, pathPoint.y);
 
-        CordMath.cordToPosition(targetCord, targetPosition, true);
+        CordMath.cordToPosition(targetCord, targetPosition, false);
 
         Vector2 currentPosition = creature.getPosition();
         Vector2 direction = new Vector2(targetPosition).sub(currentPosition).nor();
@@ -66,7 +66,7 @@ public class MovementController {
         currentPosition.x += direction.x * MOVE_SPEED;
         currentPosition.y += direction.y * MOVE_SPEED;
 
-        if(currentPosition.dst(targetPosition) < 0.3f) {
+        if(currentPosition.dst(targetPosition) < MOVE_SPEED + 0.1f) {
             path.poll();
 
             if(path.isEmpty()) {

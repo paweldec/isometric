@@ -11,6 +11,7 @@ import org.xguzm.pathfinding.grid.finders.GridFinderOptions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 public class PathFinder {
@@ -33,14 +34,15 @@ public class PathFinder {
     }
 
     public List<GridCell> find(Vector2 start, Vector2 end) {
-        List<GridCell> path = this.finder.findPath((int)start.x, (int)start.y, (int)end.x, (int)end.y, this.navigationGrid);
-        return optimizePath(path);
+        return Optional.ofNullable(this.finder.findPath((int)start.x, (int)start.y, (int)end.x, (int)end.y, this.navigationGrid))
+                .orElse(new ArrayList<>());
     }
 
     private void initGridFinder() {
         GridFinderOptions opt = new GridFinderOptions();
         opt.allowDiagonal = true;
         opt.dontCrossCorners = false;
+        opt.heuristic = new StaggeredIsometricHeuristic();
         this.finder = new AStarGridFinder<>(GridCell.class, opt);
     }
 
@@ -78,34 +80,7 @@ public class PathFinder {
             }
         }
 
-        this.navigationGrid = new NavigationGrid<>(cells);
+        this.navigationGrid = new StaggeredIsometricNavigationGrid<>(cells);
     }
-
-    private List<GridCell> optimizePath(List<GridCell> path) {
-        List<GridCell> cellsToRemove = new ArrayList<>();
-
-        for(int i = 0; i < path.size() - 2; i++) {
-            GridCell currentCell = path.get(i);
-            GridCell nextCell = path.get(i + 1);
-            GridCell afterNextCell = path.get(i + 2);
-
-            if((afterNextCell.x == currentCell.x + 1 && afterNextCell.y == currentCell.y + 2) ||
-               (afterNextCell.x == currentCell.x     && afterNextCell.y == currentCell.y + 2) ||
-               (afterNextCell.x == currentCell.x - 1 && afterNextCell.y == currentCell.y - 2) ||
-               (afterNextCell.x == currentCell.x     && afterNextCell.y == currentCell.y - 2)) {
-                cellsToRemove.add(nextCell);
-                i++;
-            }
-        }
-
-        if(!cellsToRemove.isEmpty()) {
-            log.debug("Path before optimization: {}", path);
-            path.removeAll(cellsToRemove);
-            log.debug("Path after optimization: {}", path);
-        }
-
-        return path;
-    }
-
 
 }
