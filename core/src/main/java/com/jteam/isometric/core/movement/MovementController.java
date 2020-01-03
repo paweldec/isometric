@@ -32,11 +32,12 @@ public class MovementController {
 
     public void moveToCord(Vector2 targetCord) {
         Vector2 currentCord = new Vector2();
+        log.debug(creature.getPosition().toString());
         CordMath.positionToCord(creature.getPosition(), currentCord);
         path.clear();
         path.addAll(pathFinder.find(currentCord, targetCord));
 
-        log.debug("Moving creature from [{},{}] to [{},{}]", currentCord.x, currentCord.y, targetCord.x, targetCord.y);
+        log.debug("Moving creature from {} to {}", currentCord, targetCord);
         log.debug("Generated path: {}", path);
 
         if(!path.isEmpty()) {
@@ -58,7 +59,7 @@ public class MovementController {
 
         Vector2 targetCord = new Vector2(pathPoint.x, pathPoint.y);
 
-        CordMath.cordToPosition(targetCord, targetPosition, false);
+        CordMath.cordToPosition(targetCord, targetPosition);
 
         Vector2 currentPosition = creature.getPosition();
         Vector2 direction = new Vector2(targetPosition).sub(currentPosition).nor();

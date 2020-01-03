@@ -23,7 +23,7 @@ public class DebugRenderer {
     public void render() {
         MouseMath.getWorldCord(viewport, mouseWorldCord);
 
-        float debugCursorTilePosX = (mouseWorldCord.x * TILE_WIDTH) + (mouseWorldCord.y % 2 == 0 ? TILE_WIDTH_HALF : 0) - viewport.getCamera().position.x;
+        float debugCursorTilePosX = (mouseWorldCord.x * TILE_WIDTH) + (mouseWorldCord.y % 2 == 0 ? 0 : TILE_WIDTH_HALF) - viewport.getCamera().position.x;
         float debugCursorTilePosY = (mouseWorldCord.y * TILE_HEIGHT_HALF) - viewport.getCamera().position.y;
 
         Line leftTop = Line.builder()

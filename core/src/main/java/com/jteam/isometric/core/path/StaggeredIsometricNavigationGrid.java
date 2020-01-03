@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.jteam.isometric.core.util.TileConst.TILE_HEIGHT;
+import static com.jteam.isometric.core.util.TileConst.TILE_WIDTH;
+
 public class StaggeredIsometricNavigationGrid<T extends NavigationGridGraphNode> extends NavigationGrid<T> {
 
     private List<T> neighbors;
@@ -20,17 +23,18 @@ public class StaggeredIsometricNavigationGrid<T extends NavigationGridGraphNode>
         neighbors = new ArrayList<>();
     }
 
-    /*
+    public List<T> getNeighbors(T node, PathFinderOptions opt) {
+        int x = node.getX();
+        int y = node.getY();
+        this.neighbors.clear();
+
+         /*
                  (N+0xN+2)
           (N+0xN+1)     (N+1xN+1)
         (N-1xN+0)   NxN   (N+1xN+0)
           (N+0xN-1)	    (N+1xN-1)
                  (N+0xN-2)
-    */
-    public List<T> getNeighbors(T node, PathFinderOptions opt) {
-        int x = node.getX();
-        int y = node.getY();
-        this.neighbors.clear();
+        */
         this.getNeighbor(x, y, Direction.N).ifPresent(neighbor -> this.neighbors.add(neighbor));
         this.getNeighbor(x, y, Direction.NE).ifPresent(neighbor -> this.neighbors.add(neighbor));
         this.getNeighbor(x, y, Direction.E).ifPresent(neighbor -> this.neighbors.add(neighbor));
@@ -39,29 +43,30 @@ public class StaggeredIsometricNavigationGrid<T extends NavigationGridGraphNode>
         this.getNeighbor(x, y, Direction.SW).ifPresent(neighbor -> this.neighbors.add(neighbor));
         this.getNeighbor(x, y, Direction.W).ifPresent(neighbor -> this.neighbors.add(neighbor));
         this.getNeighbor(x, y, Direction.NW).ifPresent(neighbor -> this.neighbors.add(neighbor));
+
         return this.neighbors;
     }
 
-    /*
-                 (N+0xN+2)
-          (N+0xN+1)     (N+1xN+1)
-        (N-1xN+0)   NxN   (N+1xN+0)
-          (N+0xN-1)	    (N+1xN-1)
-                 (N+0xN-2)
-    */
     public float getMovementCost(T node1, T node2, PathFinderOptions opt) {
         if (node1 == node2) {
             return 0.f;
         }
 
+        /*
+                 (N+0xN+2)
+          (N+0xN+1)     (N+1xN+1)
+        (N-1xN+0)   NxN   (N+1xN+0)
+          (N+0xN-1)	    (N+1xN-1)
+                 (N+0xN-2)
+        */
         if((node1.getX()     == node2.getX() && node1.getY() + 2 == node2.getY()) ||
            (node1.getX() + 1 == node2.getX() && node1.getY()     == node2.getY()) ||
            (node1.getX()     == node2.getX() && node1.getY() - 2 == node2.getY()) ||
            (node1.getX() - 1 == node2.getX() && node1.getY()     == node2.getY())) {
-            return 64.f;
+            return TILE_WIDTH;
         }
 
-        return 32.f;
+        return TILE_HEIGHT;
     }
 
     private Optional<T> getNeighbor(int x, int y, Direction dir) {

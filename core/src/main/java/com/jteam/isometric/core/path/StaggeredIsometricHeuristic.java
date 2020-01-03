@@ -24,8 +24,8 @@ public class StaggeredIsometricHeuristic implements Heuristic {
         targetCord.x = targetCell.getX();
         targetCord.y = targetCell.getY();
 
-        CordMath.cordToPosition(currentCord, currentPosition, false);
-        CordMath.cordToPosition(targetCord, targetPosition, false);
+        CordMath.cordToPosition(currentCord, currentPosition);
+        CordMath.cordToPosition(targetCord, targetPosition);
 
         return currentPosition.dst(targetPosition);
     }

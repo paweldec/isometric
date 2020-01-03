@@ -4,13 +4,20 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapGroupLayer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.tiled.*;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapImageLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.jteam.isometric.core.renderer.Renderer;
 import com.jteam.isometric.core.util.CordMath;
 import lombok.extern.slf4j.Slf4j;
+
+import static com.jteam.isometric.core.util.TileConst.TILE_HEIGHT_HALF;
+import static com.jteam.isometric.core.util.TileConst.TILE_WIDTH_HALF;
 
 @Slf4j
 public class IsometricMapRenderer implements TiledMapRenderer, Disposable {
@@ -62,7 +69,7 @@ public class IsometricMapRenderer implements TiledMapRenderer, Disposable {
                 final TiledMapTile tile = cell.getTile();
                 if(tile == null) continue;
 
-                float tilePosX = (tileIndexX * tileWidth) + (tileIndexY % 2 == 0 ? tileWidthHalf : 0) - camera.position.x;
+                float tilePosX = (tileIndexX * tileWidth) + (tileIndexY % 2 == 0 ? 0 : tileWidthHalf) - camera.position.x;
                 float tilePosY = (tileIndexY * tileHeightHalf) - camera.position.y;
 
                 renderer.draw(tile.getTextureRegion(), tilePosX, tilePosY);
@@ -76,6 +83,8 @@ public class IsometricMapRenderer implements TiledMapRenderer, Disposable {
 
     private void renderCord(float tilePosX, float tilePosY) {
         final Vector2 position = new Vector2(tilePosX + camera.position.x, tilePosY + camera.position.y);
+        position.x += TILE_WIDTH_HALF;
+        position.y += TILE_HEIGHT_HALF;
         final Vector2 cord = new Vector2();
         CordMath.positionToCord(position, cord);
         renderer.drawText(String.format("%sx%s", (int)cord.x, (int)cord.y), tilePosX + 16 + 5, tilePosY + 16 + 5);

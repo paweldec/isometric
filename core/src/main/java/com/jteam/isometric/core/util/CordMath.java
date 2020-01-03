@@ -1,35 +1,38 @@
 package com.jteam.isometric.core.util;
 
 import com.badlogic.gdx.math.Vector2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
+import static com.jteam.isometric.core.util.TileConst.TILE_HEIGHT;
+import static com.jteam.isometric.core.util.TileConst.TILE_HEIGHT_HALF;
+import static com.jteam.isometric.core.util.TileConst.TILE_WIDTH;
+import static com.jteam.isometric.core.util.TileConst.TILE_WIDTH_HALF;
+
+@Slf4j
 public class CordMath {
 
-    private static final int TILE_WIDTH = 64;
-    private static final int TILE_HEIGHT = 32;
-    private static final int TILE_WIDTH_HALF = TILE_WIDTH / 2;
-    private static final int TILE_HEIGHT_HALF = TILE_HEIGHT / 2;
-
     /**
-    * Calculates left top corner or center tile position (cartesian) from cord (isometric)
+    * Calculates left bottom corner or center tile position (cartesian) from cord (isometric)
     */
-    public static void cordToPosition(Vector2 cord, Vector2 position, boolean center) {
+    public static void cordToPosition(Vector2 cord, Vector2 position) {
         int cordX = (int)cord.x;
         int cordY = (int)cord.y;
 
-        position.x = (cordX * TILE_WIDTH) + (cordY % 2 == 0 ? TILE_WIDTH_HALF : 0);
+        position.x = (cordX * TILE_WIDTH) + (cordY % 2 == 0 ? 0 : TILE_WIDTH_HALF);
         position.y = cordY * TILE_HEIGHT_HALF;
 
-        if(center) {
-            position.x += TILE_WIDTH_HALF;
-            position.y += TILE_HEIGHT_HALF;
-        }
+        position.x += TILE_WIDTH_HALF;
+        position.y += TILE_HEIGHT_HALF;
     }
 
+    /**
+    * Return neighbor cord for specified cord and direction
+    */
     public static Optional<Vector2> getNeighborCord(Vector2 cord, Vector2 cordNeighbor, Direction dir) {
         Vector2 position = new Vector2();
-        cordToPosition(cord, position, false);
+        cordToPosition(cord, position);
 
         switch (dir) {
             case N: position.y += TILE_HEIGHT; break;
@@ -69,6 +72,7 @@ public class CordMath {
                 0 - 1, TILE_HEIGHT_HALF - 1,
                 0 - 1, TILE_HEIGHT + 1,
                 TILE_WIDTH_HALF + 1, TILE_HEIGHT + 1)) {
+            cordX--;
             cordY++;
         }
         // right top corner
@@ -76,7 +80,6 @@ public class CordMath {
                 TILE_WIDTH_HALF - 1, TILE_HEIGHT + 1,
                 TILE_WIDTH + 1, TILE_HEIGHT + 1,
                 TILE_WIDTH + 1, TILE_HEIGHT_HALF - 1)) {
-            cordX++;
             cordY++;
         }
         // left bottom corner
@@ -84,6 +87,7 @@ public class CordMath {
                 0 - 1, 0 - 1,
                 0 - 1, TILE_HEIGHT_HALF + 1,
                 TILE_WIDTH_HALF + 1, 0 - 1)) {
+            cordX--;
             cordY--;
         }
         // right bottom corner
@@ -91,7 +95,6 @@ public class CordMath {
                 TILE_WIDTH + 1, TILE_HEIGHT_HALF + 1,
                 TILE_WIDTH + 1, 0 - 1,
                 TILE_WIDTH_HALF - 1, 0 - 1)) {
-            cordX++;
             cordY--;
         }
 

@@ -63,7 +63,7 @@ public class Demo implements ApplicationListener {
 		minotaurAnimation = assetManager.get(Asset.ANIMATION_MINOTAUR);
 
 		Vector2 minotaurPosition = new Vector2();
-		CordMath.cordToPosition(new Vector2(0, 0), minotaurPosition, false);
+		CordMath.cordToPosition(new Vector2(0, 0), minotaurPosition);
 		Creature minotaurCreature = Creature.builder()
 				.position(minotaurPosition)
 				.animation(minotaurAnimation)

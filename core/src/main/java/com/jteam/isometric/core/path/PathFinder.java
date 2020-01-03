@@ -40,8 +40,6 @@ public class PathFinder {
 
     private void initGridFinder() {
         GridFinderOptions opt = new GridFinderOptions();
-        opt.allowDiagonal = true;
-        opt.dontCrossCorners = false;
         opt.heuristic = new StaggeredIsometricHeuristic();
         this.finder = new AStarGridFinder<>(GridCell.class, opt);
     }
@@ -60,7 +58,7 @@ public class PathFinder {
             throw new IllegalArgumentException(String.format("Invalid layer size %sx%s!", width, height));
         }
 
-        GridCell[][] cells = new GridCell[width][height];
+        GridCell[][] cells = new GridCell[height][width];
 
         for(int y = cells.length - 1; y >= 0; y--) {
             for(int x = cells[y].length - 1; x >= 0; x--) {
