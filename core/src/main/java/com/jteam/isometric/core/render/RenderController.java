@@ -22,9 +22,10 @@ public class RenderController {
         final Vector2 position = creature.getPosition();
         final Animation animation = creature.getAnimation();
 
-        renderer.draw(animation.getFrame(),
-                position.x - camera.position.x - 64,
-                position.y - camera.position.y - 32);
+        float posX = position.x - camera.position.x - (animation.getRenderSizeWidth() - animation.getRenderOffsetX());
+        float posY = position.y - camera.position.y - (animation.getRenderSizeHeight() - animation.getRenderOffsetY());
+
+        renderer.draw(animation.getFrame(), posX, posY);
     }
 
 }

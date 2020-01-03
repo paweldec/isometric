@@ -58,8 +58,8 @@ public class IsometricMapRenderer implements TiledMapRenderer, Disposable {
         int cameraPosXInTiles = (int) (camera.position.x / tileWidth);
         int cameraPosYInTiles = (int) (camera.position.y / tileHeightHalf);
 
-        for(int y = viewportHeightInTiles + offsetInTiles; y >= 0 - offsetInTiles; y--) {
-            for(int x = viewportWidthInTiles + offsetInTiles; x >= 0 - offsetInTiles; x--) {
+        for(int y = 0 - offsetInTiles; y < viewportHeightInTiles + offsetInTiles; y++) {
+            for(int x = 0 - offsetInTiles; x < viewportWidthInTiles + offsetInTiles; x++) {
                 int tileIndexX = x + cameraPosXInTiles;
                 int tileIndexY = y + cameraPosYInTiles;
 

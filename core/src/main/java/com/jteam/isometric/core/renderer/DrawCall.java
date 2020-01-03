@@ -9,4 +9,5 @@ class DrawCall<T> {
     private final T draw;
     private final float positionX;
     private final float positionY;
+    private final float order;
 }

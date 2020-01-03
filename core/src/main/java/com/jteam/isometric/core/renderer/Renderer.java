@@ -10,6 +10,8 @@ import com.jteam.isometric.core.shape.Line;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Comparator.comparing;
+
 public class Renderer {
 
     private SpriteBatch batch;
@@ -33,30 +35,34 @@ public class Renderer {
 
     public void draw(TextureRegion textureRegion, float positionX, float positionY) {
         if(textureRegion == null) return;
-        drawCallsTexture.add(buildDrawCall(textureRegion, positionX, positionY));
+        drawCallsTexture.add(buildDrawCall(textureRegion, positionX, positionY, -positionY));
     }
 
     public void drawText(String text, float positionX, float positionY) {
         if(text == null) return;
-        drawCallsText.add(buildDrawCall(text, positionX, positionY));
+        drawCallsText.add(buildDrawCall(text, positionX, positionY, drawCallsText.size()));
     }
 
     public void drawLine(Line line) {
         if(line == null) return;
-        drawCallsLine.add(buildDrawCall(line, 0, 0));
+        drawCallsLine.add(buildDrawCall(line, 0, 0, drawCallsLine.size()));
     }
 
-    private <T> DrawCall<T> buildDrawCall(T draw, float positionX, float positionY) {
+    private <T> DrawCall<T> buildDrawCall(T draw, float positionX, float positionY, float order) {
         return DrawCall.<T>builder()
-                .draw(draw)
-                .positionX(positionX)
-                .positionY(positionY)
-                .build();
+            .draw(draw)
+            .positionX(positionX)
+            .positionY(positionY)
+            .order(order)
+            .build();
     }
 
     public void render() {
         batch.begin();
-        drawCallsTexture.forEach(this::drawTexture);
+
+        drawCallsTexture.stream()
+            .sorted(comparing(DrawCall::getOrder))
+            .forEach(this::drawTexture);
         drawCallsText.forEach(this::drawText);;
         batch.end();
 
