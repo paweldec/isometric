@@ -2,6 +2,7 @@ package com.jteam.isometric.core;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.GL20;
@@ -13,14 +14,18 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.jteam.isometric.core.animation.Animation;
 import com.jteam.isometric.core.animation.AnimationController;
 import com.jteam.isometric.core.animation.AnimationLoader;
+import com.jteam.isometric.core.camera.OrthoCameraController;
 import com.jteam.isometric.core.creature.Creature;
-import com.jteam.isometric.core.input.PlayerInputController;
+import com.jteam.isometric.core.creature.CreatureRenderer;
+import com.jteam.isometric.core.debug.DebugInput;
+import com.jteam.isometric.core.debug.DebugRenderer;
+import com.jteam.isometric.core.map.StaggeredIsometricMapRenderer;
 import com.jteam.isometric.core.movement.MovementController;
 import com.jteam.isometric.core.path.PathFinder;
-import com.jteam.isometric.core.render.RenderController;
+import com.jteam.isometric.core.player.PlayerInput;
 import com.jteam.isometric.core.renderer.Renderer;
-import com.jteam.isometric.core.util.CordMath;
-import com.jteam.isometric.core.util.Direction;
+import com.jteam.isometric.core.util.math.CordMath;
+import com.jteam.isometric.core.util.math.Direction;
 import lombok.extern.slf4j.Slf4j;
 import org.xguzm.pathfinding.gdxbridge.NavTmxMapLoader;
 
@@ -35,10 +40,9 @@ public class Demo implements ApplicationListener {
 	private AnimationController minotaurAnimationController;
 	private PathFinder pathFinder;
 	private MovementController minotaurMovementController;
-	private PlayerInputController playerInputController;
-	private RenderController renderController;
+	private CreatureRenderer creatureRenderer;
 	private Renderer renderer;
-	private IsometricMapRenderer isometricMapRenderer;
+	private StaggeredIsometricMapRenderer staggeredIsometricMapRenderer;
 	private DebugRenderer debugRenderer;
 
 	@Override
@@ -49,8 +53,10 @@ public class Demo implements ApplicationListener {
 		camera = new OrthographicCamera();
 		viewport = new FitViewport(w, h, camera);
 
+        InputMultiplexer inputMultiplexer = new InputMultiplexer();
+
 		OrthoCameraController orthoCamController = new OrthoCameraController(camera);
-		Gdx.input.setInputProcessor(orthoCamController);
+		inputMultiplexer.addProcessor(orthoCamController);
 
 		assetManager = new AssetManager();
 		assetManager.setLoader(TiledMap.class, new NavTmxMapLoader(new InternalFileHandleResolver()));
@@ -78,15 +84,20 @@ public class Demo implements ApplicationListener {
 		pathFinder = new PathFinder(map);
 
 		minotaurMovementController = new MovementController(minotaurCreature, pathFinder);
-		//minotaurMovementController.moveToCord(new Vector2(3, 16));
 
-		playerInputController = new PlayerInputController(minotaurMovementController, viewport);
+        DebugInput debugInput = new DebugInput();
+        PlayerInput playerInput = new PlayerInput(minotaurMovementController, viewport);
 
-		renderController = new RenderController(minotaurCreature, renderer, camera);
+        inputMultiplexer.addProcessor(debugInput);
+        inputMultiplexer.addProcessor(playerInput);
 
-		isometricMapRenderer = new IsometricMapRenderer(renderer, map);
+        creatureRenderer = new CreatureRenderer(minotaurCreature, renderer, camera);
+
+		staggeredIsometricMapRenderer = new StaggeredIsometricMapRenderer(renderer, map);
 		debugRenderer = new DebugRenderer(renderer, viewport);
-	}
+
+        Gdx.input.setInputProcessor(inputMultiplexer);
+    }
 
 	@Override
 	public void resize (int width, int height) {
@@ -99,13 +110,12 @@ public class Demo implements ApplicationListener {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
 
-		isometricMapRenderer.setView(camera);
-		isometricMapRenderer.render();
+		staggeredIsometricMapRenderer.setView(camera);
+		staggeredIsometricMapRenderer.render();
 
 		minotaurAnimationController.update();
 		minotaurMovementController.update();
-		playerInputController.update();
-		renderController.update();
+		creatureRenderer.update();
 
 		debugRenderer.render();
 

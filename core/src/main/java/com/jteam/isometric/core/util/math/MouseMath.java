@@ -1,4 +1,4 @@
-package com.jteam.isometric.core.util;
+package com.jteam.isometric.core.util.math;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;

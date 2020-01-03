@@ -1,4 +1,4 @@
-package com.jteam.isometric.core.util;
+package com.jteam.isometric.core.util.math;
 
 import com.badlogic.gdx.math.Vector2;
 import lombok.extern.slf4j.Slf4j;

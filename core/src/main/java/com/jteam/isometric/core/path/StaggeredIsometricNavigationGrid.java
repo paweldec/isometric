@@ -1,8 +1,8 @@
 package com.jteam.isometric.core.path;
 
 import com.badlogic.gdx.math.Vector2;
-import com.jteam.isometric.core.util.CordMath;
-import com.jteam.isometric.core.util.Direction;
+import com.jteam.isometric.core.util.math.CordMath;
+import com.jteam.isometric.core.util.math.Direction;
 import org.xguzm.pathfinding.PathFinderOptions;
 import org.xguzm.pathfinding.grid.NavigationGrid;
 import org.xguzm.pathfinding.grid.NavigationGridGraphNode;

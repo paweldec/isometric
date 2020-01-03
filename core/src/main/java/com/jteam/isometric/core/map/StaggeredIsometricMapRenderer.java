@@ -1,4 +1,4 @@
-package com.jteam.isometric.core;
+package com.jteam.isometric.core.map;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapGroupLayer;
@@ -12,25 +12,24 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
+import com.jteam.isometric.core.debug.DebugConfig;
 import com.jteam.isometric.core.renderer.Renderer;
-import com.jteam.isometric.core.util.CordMath;
+import com.jteam.isometric.core.util.math.CordMath;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.jteam.isometric.core.util.TileConst.TILE_HEIGHT_HALF;
 import static com.jteam.isometric.core.util.TileConst.TILE_WIDTH_HALF;
 
 @Slf4j
-public class IsometricMapRenderer implements TiledMapRenderer, Disposable {
+public class StaggeredIsometricMapRenderer implements TiledMapRenderer, Disposable {
 
     private Renderer renderer;
     private TiledMap map;
     private OrthographicCamera camera;
-    private boolean showCords;
 
-    public IsometricMapRenderer(Renderer renderer, TiledMap map) {
+    public StaggeredIsometricMapRenderer(Renderer renderer, TiledMap map) {
         this.renderer = renderer;
         this.map = map;
-        this.showCords = true;
     }
 
     @Override
@@ -74,7 +73,7 @@ public class IsometricMapRenderer implements TiledMapRenderer, Disposable {
 
                 renderer.draw(tile.getTextureRegion(), tilePosX, tilePosY);
 
-                if(showCords) {
+                if(DebugConfig.getInstance().isMapCords()) {
                     renderCord(tilePosX, tilePosY);
                 }
             }
@@ -121,6 +120,10 @@ public class IsometricMapRenderer implements TiledMapRenderer, Disposable {
     }
 
     protected void renderMapLayer (MapLayer layer) {
+        if(MapLayerName.COLLISION.name().toLowerCase().equals(layer.getName())) {
+            layer.setVisible(DebugConfig.getInstance().isCollisionLayer());
+        }
+
         if (!layer.isVisible()) return;
 
         if (layer instanceof MapGroupLayer) {

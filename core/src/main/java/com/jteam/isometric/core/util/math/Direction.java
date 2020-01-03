@@ -1,4 +1,4 @@
-package com.jteam.isometric.core.util;
+package com.jteam.isometric.core.util.math;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package com.jteam.isometric.core.animation;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.jteam.isometric.core.creature.Creature;
-import com.jteam.isometric.core.util.Direction;
+import com.jteam.isometric.core.util.math.Direction;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 

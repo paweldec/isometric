@@ -1,4 +1,4 @@
-package com.jteam.isometric.core.shape;
+package com.jteam.isometric.core.util.shape;
 
 import com.badlogic.gdx.math.Vector2;
 import lombok.Builder;

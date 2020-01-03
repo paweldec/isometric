@@ -3,7 +3,7 @@ package com.jteam.isometric.core.movement;
 import com.badlogic.gdx.math.Vector2;
 import com.jteam.isometric.core.creature.Creature;
 import com.jteam.isometric.core.path.PathFinder;
-import com.jteam.isometric.core.util.CordMath;
+import com.jteam.isometric.core.util.math.CordMath;
 import lombok.extern.slf4j.Slf4j;
 import org.xguzm.pathfinding.grid.GridCell;
 
@@ -32,7 +32,6 @@ public class MovementController {
 
     public void moveToCord(Vector2 targetCord) {
         Vector2 currentCord = new Vector2();
-        log.debug(creature.getPosition().toString());
         CordMath.positionToCord(creature.getPosition(), currentCord);
         path.clear();
         path.addAll(pathFinder.find(currentCord, targetCord));

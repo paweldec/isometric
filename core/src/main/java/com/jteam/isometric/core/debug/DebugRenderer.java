@@ -1,10 +1,10 @@
-package com.jteam.isometric.core;
+package com.jteam.isometric.core.debug;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.jteam.isometric.core.renderer.Renderer;
-import com.jteam.isometric.core.shape.Line;
-import com.jteam.isometric.core.util.MouseMath;
+import com.jteam.isometric.core.util.math.MouseMath;
+import com.jteam.isometric.core.util.shape.Line;
 import lombok.RequiredArgsConstructor;
 
 import static com.jteam.isometric.core.util.TileConst.TILE_HEIGHT;

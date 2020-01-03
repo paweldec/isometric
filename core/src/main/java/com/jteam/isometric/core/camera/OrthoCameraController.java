@@ -1,4 +1,4 @@
-package com.jteam.isometric.core;
+package com.jteam.isometric.core.camera;
 
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
