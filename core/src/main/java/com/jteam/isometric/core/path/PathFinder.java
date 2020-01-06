@@ -6,8 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import lombok.extern.slf4j.Slf4j;
 import org.xguzm.pathfinding.grid.GridCell;
 import org.xguzm.pathfinding.grid.NavigationGrid;
-import org.xguzm.pathfinding.grid.finders.AStarGridFinder;
-import org.xguzm.pathfinding.grid.finders.GridFinderOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +18,7 @@ public class PathFinder {
     private static final String CELL_PROPERTY = "walkable";
 
     private final TiledMap map;
-    private AStarGridFinder<GridCell> finder;
+    private AStarStaggeredIsometricFinder<GridCell> finder;
     private NavigationGrid<GridCell> navigationGrid;
 
     public PathFinder(TiledMap map) {
@@ -29,19 +27,17 @@ public class PathFinder {
     }
 
     private void init() {
-        initGridFinder();
+        initFinder();
         initNavigationGrid();
     }
 
-    public List<GridCell> find(Vector2 start, Vector2 end) {
-        return Optional.ofNullable(this.finder.findPath((int)start.x, (int)start.y, (int)end.x, (int)end.y, this.navigationGrid))
+    public List<GridCell> find(Vector2 startCord, Vector2 endCord) {
+        return Optional.ofNullable(this.finder.findPath(startCord, endCord, this.navigationGrid))
                 .orElse(new ArrayList<>());
     }
 
-    private void initGridFinder() {
-        GridFinderOptions opt = new GridFinderOptions();
-        opt.heuristic = new StaggeredIsometricHeuristic();
-        this.finder = new AStarGridFinder<>(GridCell.class, opt);
+    private void initFinder() {
+        this.finder = new AStarStaggeredIsometricFinder<>(GridCell.class);
     }
 
     private void initNavigationGrid() {
