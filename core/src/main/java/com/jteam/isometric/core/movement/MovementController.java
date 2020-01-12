@@ -1,7 +1,6 @@
 package com.jteam.isometric.core.movement;
 
 import com.badlogic.gdx.math.Vector2;
-import com.jteam.isometric.core.animation.AnimationController;
 import com.jteam.isometric.core.creature.Creature;
 import com.jteam.isometric.core.path.PathFinder;
 import com.jteam.isometric.core.util.math.CordMath;
@@ -16,7 +15,6 @@ import java.util.Queue;
 public class MovementController {
 
     private final Creature creature;
-    private final AnimationController animationController;
     private final PathFinder pathFinder;
 
     private final Vector2 currentCord;
@@ -24,16 +22,13 @@ public class MovementController {
     private final Vector2 targetPosition;
     private final Vector2 direction;
 
-    private boolean moving;
     private Queue<GridCell> path;
 
     private static final float MOVE_SPEED = 1.0f;
 
-    public MovementController(AnimationController animationController, PathFinder pathFinder) {
-        this.creature = animationController.getCreature();
-        this.animationController = animationController;
+    public MovementController(Creature creature, PathFinder pathFinder) {
+        this.creature = creature;
         this.pathFinder = pathFinder;
-        this.moving = false;
         this.path = new LinkedList<>();
 
         this.currentCord = new Vector2();
@@ -52,24 +47,21 @@ public class MovementController {
         log.debug("Generated path: {}", path);
 
         if(!path.isEmpty()) {
-            moving = true;
-            animationController.setState("run");
+            creature.setMoving(true);
         }
     }
 
     public void update() {
-        if(!moving) {
+        if(!creature.isMoving()) {
             return;
         }
 
         GridCell pathPoint = path.peek();
 
         if(pathPoint == null) {
-            moving = false;
-            animationController.setState("stance");
+            creature.setMoving(false);
             return;
         }
-
 
         targetCord.set(pathPoint.getX(), pathPoint.getY());
 
@@ -84,14 +76,13 @@ public class MovementController {
         currentPosition.x += direction.x * MOVE_SPEED;
         currentPosition.y += direction.y * MOVE_SPEED;
 
-        animationController.setDirection(Direction.fromVector(direction));
+        creature.setFacingDir(Direction.fromVector(direction));
 
         if(currentPosition.dst(targetPosition) < MOVE_SPEED + 0.1f) {
             path.poll();
 
             if(path.isEmpty()) {
-                moving = false;
-                animationController.setState("stance");
+                creature.setMoving(false);
             }
         }
 

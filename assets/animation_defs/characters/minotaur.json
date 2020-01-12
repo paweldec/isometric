@@ -15,7 +15,7 @@
       "name": "run",
       "position": 8,
       "frames": 8,
-      "duration": 160,
+      "duration": 100,
       "type": "LOOPED"
     }, {
       "name": "swing",

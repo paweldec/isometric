@@ -2,7 +2,6 @@ package com.jteam.isometric.core.animation;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.jteam.isometric.core.creature.Creature;
-import com.jteam.isometric.core.util.math.Direction;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -13,7 +12,6 @@ public class AnimationController {
     private final Creature creature;
     private AnimationState lastState;
     private AnimationState currentState;
-    private Direction direction;
     private StopWatch elapsedTime;
     private int currentFrame;
 
@@ -23,25 +21,6 @@ public class AnimationController {
         this.currentState = getFirstState();
         this.elapsedTime = new StopWatch();
         this.elapsedTime.start();
-        this.direction = Direction.W;
-    }
-
-    public void setState(String stateName) {
-        lastState = currentState;
-        currentState = creature.getAnimation().getStates().stream()
-                .filter(animationState -> animationState.getName().equals(stateName))
-                .peek(animationState -> this.resetAnimation())
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException(String.format("State %s not found in animation %s",
-                        stateName, creature.getAnimation().getTexturePath())));
-    }
-
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
-
-    public Creature getCreature() {
-        return creature;
     }
 
     public void update() {
@@ -64,22 +43,40 @@ public class AnimationController {
 
         creature.getAnimation().setFrame(getTextureRegion());
 
+        if(creature.isMoving()) {
+            setState("run");
+        } else {
+            setState("stance");
+        }
+
         elapsedTime.reset();
         elapsedTime.start();
+    }
+
+    private void setState(String stateName) {
+        if(currentState.getName().equals(stateName)) return;
+
+        lastState = currentState;
+        currentState = creature.getAnimation().getStates().stream()
+                .filter(animationState -> animationState.getName().equals(stateName))
+                .peek(animationState -> this.resetAnimation())
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(String.format("State %s not found in animation %s",
+                        stateName, creature.getAnimation().getTexturePath())));
     }
 
     private void resetAnimation() {
         currentFrame = 0;
     }
 
-    public TextureRegion getTextureRegion() {
+    private TextureRegion getTextureRegion() {
         final Animation animation = creature.getAnimation();
 
         if(currentState == null || animation == null || animation.getTexture() == null) return null;
 
         int totalFramesInOneLine = animation.getTexture().getWidth() / animation.getRenderSizeWidth();
         int currentFramePosition = currentState.getPosition() + currentFrame;
-        int currentFrameLine = direction.getCode();
+        int currentFrameLine = creature.getFacingDir().getCode();
         int currentFrameInLine = currentFramePosition % totalFramesInOneLine;
 
         int x = animation.getRenderSizeWidth() * currentFrameInLine;

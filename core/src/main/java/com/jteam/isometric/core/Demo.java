@@ -71,19 +71,17 @@ public class Demo implements ApplicationListener {
 		Vector2 minotaurPosition = new Vector2();
 		CordMath.cordToPosition(new Vector2(0, 0), minotaurPosition);
 		Creature minotaurCreature = Creature.builder()
-				.position(minotaurPosition)
-				.animation(minotaurAnimation)
-				.build();
+            .position(minotaurPosition)
+			.animation(minotaurAnimation)
+            .isMoving(false)
+            .facingDir(Direction.E)
+            .build();
 
 		renderer = new Renderer();
+        pathFinder = new PathFinder(map);
 
 		minotaurAnimationController = new AnimationController(minotaurCreature);
-		minotaurAnimationController.setState("stance");
-		minotaurAnimationController.setDirection(Direction.E);
-
-		pathFinder = new PathFinder(map);
-
-		minotaurMovementController = new MovementController(minotaurAnimationController, pathFinder);
+		minotaurMovementController = new MovementController(minotaurCreature, pathFinder);
 
         DebugInput debugInput = new DebugInput();
         PlayerInput playerInput = new PlayerInput(minotaurMovementController, viewport);
@@ -92,7 +90,6 @@ public class Demo implements ApplicationListener {
         inputMultiplexer.addProcessor(playerInput);
 
         creatureRenderer = new CreatureRenderer(minotaurCreature, renderer, camera);
-
 		staggeredIsometricMapRenderer = new StaggeredIsometricMapRenderer(renderer, map);
 		debugRenderer = new DebugRenderer(renderer, viewport);
 
