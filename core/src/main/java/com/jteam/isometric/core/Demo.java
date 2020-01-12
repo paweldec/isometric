@@ -83,7 +83,7 @@ public class Demo implements ApplicationListener {
 
 		pathFinder = new PathFinder(map);
 
-		minotaurMovementController = new MovementController(minotaurCreature, pathFinder);
+		minotaurMovementController = new MovementController(minotaurAnimationController, pathFinder);
 
         DebugInput debugInput = new DebugInput();
         PlayerInput playerInput = new PlayerInput(minotaurMovementController, viewport);

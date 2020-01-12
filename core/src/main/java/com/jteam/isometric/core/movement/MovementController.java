@@ -1,9 +1,11 @@
 package com.jteam.isometric.core.movement;
 
 import com.badlogic.gdx.math.Vector2;
+import com.jteam.isometric.core.animation.AnimationController;
 import com.jteam.isometric.core.creature.Creature;
 import com.jteam.isometric.core.path.PathFinder;
 import com.jteam.isometric.core.util.math.CordMath;
+import com.jteam.isometric.core.util.math.Direction;
 import lombok.extern.slf4j.Slf4j;
 import org.xguzm.pathfinding.grid.GridCell;
 
@@ -14,20 +16,30 @@ import java.util.Queue;
 public class MovementController {
 
     private final Creature creature;
+    private final AnimationController animationController;
     private final PathFinder pathFinder;
+
+    private final Vector2 currentCord;
+    private final Vector2 targetCord;
     private final Vector2 targetPosition;
+    private final Vector2 direction;
 
     private boolean moving;
     private Queue<GridCell> path;
 
-    private static final float MOVE_SPEED = 1.5f;
+    private static final float MOVE_SPEED = 1.0f;
 
-    public MovementController(Creature creature, PathFinder pathFinder) {
+    public MovementController(AnimationController animationController, PathFinder pathFinder) {
+        this.creature = animationController.getCreature();
+        this.animationController = animationController;
         this.pathFinder = pathFinder;
-        this.creature = creature;
-        this.targetPosition = new Vector2(creature.getPosition());
         this.moving = false;
         this.path = new LinkedList<>();
+
+        this.currentCord = new Vector2();
+        this.targetCord = new Vector2();
+        this.targetPosition = new Vector2(creature.getPosition());
+        this.direction = new Vector2();
     }
 
     public void moveToCord(Vector2 targetCord) {
@@ -41,6 +53,7 @@ public class MovementController {
 
         if(!path.isEmpty()) {
             moving = true;
+            animationController.setState("run");
         }
     }
 
@@ -53,24 +66,32 @@ public class MovementController {
 
         if(pathPoint == null) {
             moving = false;
+            animationController.setState("stance");
             return;
         }
 
-        Vector2 targetCord = new Vector2(pathPoint.x, pathPoint.y);
+
+        targetCord.set(pathPoint.getX(), pathPoint.getY());
 
         CordMath.cordToPosition(targetCord, targetPosition);
+        CordMath.positionToCord(creature.getPosition(), currentCord);
 
         Vector2 currentPosition = creature.getPosition();
-        Vector2 direction = new Vector2(targetPosition).sub(currentPosition).nor();
+
+        direction.set(targetPosition);
+        direction.set(direction.sub(currentPosition).nor());
 
         currentPosition.x += direction.x * MOVE_SPEED;
         currentPosition.y += direction.y * MOVE_SPEED;
+
+        animationController.setDirection(Direction.fromVector(direction));
 
         if(currentPosition.dst(targetPosition) < MOVE_SPEED + 0.1f) {
             path.poll();
 
             if(path.isEmpty()) {
                 moving = false;
+                animationController.setState("stance");
             }
         }
 

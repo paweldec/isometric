@@ -40,6 +40,10 @@ public class AnimationController {
         this.direction = direction;
     }
 
+    public Creature getCreature() {
+        return creature;
+    }
+
     public void update() {
         if(currentState == null) return;
         if(elapsedTime.getTime(TimeUnit.MILLISECONDS) < currentState.getDuration()) return;
