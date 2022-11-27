@@ -5,7 +5,10 @@ import com.jteam.isometric.core.creature.Creature;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 public class AnimationController {
@@ -41,7 +44,7 @@ public class AnimationController {
             }
         }
 
-        creature.getAnimation().setFrame(getTextureRegion());
+        updateFrame();
 
         if(creature.isMoving()) {
             setState("run");
@@ -69,12 +72,15 @@ public class AnimationController {
         currentFrame = 0;
     }
 
-    private TextureRegion getTextureRegion() {
-        final Animation animation = creature.getAnimation();
+    protected void updateFrame() {
+        Animation animation = creature.getAnimation();
+        animation.setFrames(getTextureRegions(animation));
+    }
 
-        if(currentState == null || animation == null || animation.getTexture() == null) return null;
+    private List<TextureRegion> getTextureRegions(Animation animation) {
+        if(currentState == null || animation == null || animation.getTextures() == null || animation.getTextures().isEmpty()) return null;
 
-        int totalFramesInOneLine = animation.getTexture().getWidth() / animation.getRenderSizeWidth();
+        int totalFramesInOneLine = animation.getTextures().get(0).getWidth() / animation.getRenderSizeWidth();
         int currentFramePosition = currentState.getPosition() + currentFrame;
         int currentFrameLine = creature.getFacingDir().getCode();
         int currentFrameInLine = currentFramePosition % totalFramesInOneLine;
@@ -82,10 +88,12 @@ public class AnimationController {
         int x = animation.getRenderSizeWidth() * currentFrameInLine;
         int y = animation.getRenderSizeHeight() * currentFrameLine;
 
-        return new TextureRegion(animation.getTexture(), x, y, animation.getRenderSizeWidth(), animation.getRenderSizeHeight());
+        return animation.getTextures().stream()
+            .map(texture -> new TextureRegion(texture, x, y, animation.getRenderSizeWidth(), animation.getRenderSizeHeight()))
+            .collect(toList());
     }
 
-    private AnimationState getFirstState() {
+    protected AnimationState getFirstState() {
         return creature.getAnimation().getStates().get(0);
     }
 

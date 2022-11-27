@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -26,6 +27,7 @@ import com.jteam.isometric.core.player.PlayerInput;
 import com.jteam.isometric.core.renderer.Renderer;
 import com.jteam.isometric.core.util.math.CordMath;
 import com.jteam.isometric.core.util.math.Direction;
+import com.sun.tools.javac.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.xguzm.pathfinding.gdxbridge.NavTmxMapLoader;
 
@@ -37,10 +39,19 @@ public class Demo implements ApplicationListener {
 	private AssetManager assetManager;
 	private TiledMap map;
 	private Animation minotaurAnimation;
+	private Animation playerAnimation;
+	private Texture leatherHelmTexture;
+	private Texture leatherArmorTexture;
+	private Texture leatherPantsTexture;
+	private Texture leatherBootsTexture;
+	private Texture leatherGlovesTexture;
 	private AnimationController minotaurAnimationController;
+	private AnimationController playerAnimationController;
 	private PathFinder pathFinder;
 	private MovementController minotaurMovementController;
-	private CreatureRenderer creatureRenderer;
+	private MovementController playerMovementController;
+	private CreatureRenderer minotaurCreatureRenderer;
+	private CreatureRenderer playerCreatureRenderer;
 	private Renderer renderer;
 	private StaggeredIsometricMapRenderer staggeredIsometricMapRenderer;
 	private DebugRenderer debugRenderer;
@@ -63,10 +74,29 @@ public class Demo implements ApplicationListener {
 		assetManager.setLoader(Animation.class, new AnimationLoader(new InternalFileHandleResolver()));
 		assetManager.load(Asset.MAP_DEMO, TiledMap.class);
 		assetManager.load(Asset.ANIMATION_MINOTAUR, Animation.class);
+		assetManager.load(Asset.ANIMATION_PLAYER, Animation.class);
+		assetManager.load(Asset.TEXTURE_ITEM_LEATHER_HELM, Texture.class);
+		assetManager.load(Asset.TEXTURE_ITEM_LEATHER_ARMOR, Texture.class);
+		assetManager.load(Asset.TEXTURE_ITEM_LEATHER_PANTS, Texture.class);
+		assetManager.load(Asset.TEXTURE_ITEM_LEATHER_BOOTS, Texture.class);
+		assetManager.load(Asset.TEXTURE_ITEM_LEATHER_GLOVES, Texture.class);
 		assetManager.finishLoading();
 
 		map = assetManager.get(Asset.MAP_DEMO);
 		minotaurAnimation = assetManager.get(Asset.ANIMATION_MINOTAUR);
+		playerAnimation = assetManager.get(Asset.ANIMATION_PLAYER);
+		leatherHelmTexture = assetManager.get(Asset.TEXTURE_ITEM_LEATHER_HELM);
+		leatherArmorTexture = assetManager.get(Asset.TEXTURE_ITEM_LEATHER_ARMOR);
+		leatherPantsTexture = assetManager.get(Asset.TEXTURE_ITEM_LEATHER_PANTS);
+		leatherBootsTexture = assetManager.get(Asset.TEXTURE_ITEM_LEATHER_BOOTS);
+		leatherGlovesTexture = assetManager.get(Asset.TEXTURE_ITEM_LEATHER_GLOVES);
+        playerAnimation.setTextures(List.of(
+            leatherHelmTexture,
+            leatherArmorTexture,
+            leatherPantsTexture,
+            leatherBootsTexture,
+            leatherGlovesTexture
+        ));
 
 		Vector2 minotaurPosition = new Vector2();
 		CordMath.cordToPosition(new Vector2(0, 0), minotaurPosition);
@@ -77,19 +107,31 @@ public class Demo implements ApplicationListener {
             .facingDir(Direction.E)
             .build();
 
+        Vector2 playerPosition = new Vector2();
+        CordMath.cordToPosition(new Vector2(4, 4), playerPosition);
+        Creature playerCreature = Creature.builder()
+            .position(playerPosition)
+            .animation(playerAnimation)
+            .isMoving(false)
+            .facingDir(Direction.E)
+            .build();
+
 		renderer = new Renderer();
         pathFinder = new PathFinder(map);
 
 		minotaurAnimationController = new AnimationController(minotaurCreature);
+		playerAnimationController = new AnimationController(playerCreature);
 		minotaurMovementController = new MovementController(minotaurCreature, pathFinder);
+		playerMovementController = new MovementController(playerCreature, pathFinder);
 
         DebugInput debugInput = new DebugInput();
-        PlayerInput playerInput = new PlayerInput(minotaurMovementController, viewport);
+        PlayerInput playerInput = new PlayerInput(playerMovementController, viewport);
 
         inputMultiplexer.addProcessor(debugInput);
         inputMultiplexer.addProcessor(playerInput);
 
-        creatureRenderer = new CreatureRenderer(minotaurCreature, renderer, camera);
+        minotaurCreatureRenderer = new CreatureRenderer(minotaurCreature, renderer, camera);
+        playerCreatureRenderer = new CreatureRenderer(playerCreature, renderer, camera);
 		staggeredIsometricMapRenderer = new StaggeredIsometricMapRenderer(renderer, map);
 		debugRenderer = new DebugRenderer(renderer, viewport);
 
@@ -111,8 +153,11 @@ public class Demo implements ApplicationListener {
 		staggeredIsometricMapRenderer.render();
 
 		minotaurAnimationController.update();
+        playerAnimationController.update();
 		minotaurMovementController.update();
-		creatureRenderer.update();
+        playerMovementController.update();
+		minotaurCreatureRenderer.update();
+        playerCreatureRenderer.update();
 
 		debugRenderer.render();
 

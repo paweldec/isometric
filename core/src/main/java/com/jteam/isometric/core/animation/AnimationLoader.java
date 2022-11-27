@@ -9,6 +9,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import com.sun.tools.javac.util.List;
 
 public class AnimationLoader extends AsynchronousAssetLoader<Animation, AnimationLoader.AnimationParameter> {
 
@@ -30,8 +31,10 @@ public class AnimationLoader extends AsynchronousAssetLoader<Animation, Animatio
     public Animation loadSync(AssetManager manager, String fileName, FileHandle file, AnimationParameter parameter) {
         Animation animation = this.animation;
         this.animation = null;
-        final Texture texture = new Texture(resolve(animation.getTexturePath()));
-        animation.setTexture(texture);
+        if (animation.getTexturePath() != null) {
+            final Texture texture = new Texture(resolve(animation.getTexturePath()));
+            animation.setTextures(List.of(texture));
+        }
         return animation;
     }
 

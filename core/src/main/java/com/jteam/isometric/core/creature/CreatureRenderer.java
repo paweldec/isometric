@@ -21,10 +21,12 @@ public class CreatureRenderer {
         final Vector2 position = creature.getPosition();
         final Animation animation = creature.getAnimation();
 
+        if (animation.getFrames() == null) return;
+
         float posX = position.x - camera.position.x - (animation.getRenderSizeWidth() - animation.getRenderOffsetX());
         float posY = position.y - camera.position.y - (animation.getRenderSizeHeight() - animation.getRenderOffsetY());
 
-        renderer.draw(animation.getFrame(), posX, posY);
+        animation.getFrames().forEach(frame -> renderer.draw(frame, posX, posY));
     }
 
 }

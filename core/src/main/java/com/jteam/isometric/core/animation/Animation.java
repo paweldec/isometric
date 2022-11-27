@@ -8,12 +8,12 @@ import java.util.List;
 
 @Data
 public class Animation {
-    private Texture texture;
+    private List<Texture> textures;
     private String texturePath;
     private int renderSizeWidth;
     private int renderSizeHeight;
     private int renderOffsetX;
     private int renderOffsetY;
     private List<AnimationState> states;
-    private TextureRegion frame;
+    private List<TextureRegion> frames;
 }
